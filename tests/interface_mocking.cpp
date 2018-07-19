@@ -9,10 +9,20 @@
 #include "server_crtp.h"
 
 struct ServerTests : public ::testing::Test {
-    Server s{new ServerMock, new DatabaseMock};
+    ServerTests()
+        : srvMock(new interface::ServerMock),
+          dbMock(new interface::DatabaseMock),
+          s(srvMock, dbMock) {}
+    interface::ServerMock* srvMock;
+    interface::DatabaseMock* dbMock;
+    interface::Server s;
 };
 
-TEST_F(ServerTests, server_cannot_start) { EXPECT_ANY_THROW(s.startServer()); }
+TEST_F(ServerTests, server_cannot_start) {
+    ON_CALL(*srvMock, startServer)
+        .WillByDefault(::testing::Throw(std::runtime_error("")));
+    EXPECT_ANY_THROW(s.startServer());
+}
 
 struct ServerCrtp : public ::testing::Test {
     crtp::Server<crtp::ServerMock, crtp::DatabaseMock> _server;
@@ -20,6 +30,19 @@ struct ServerCrtp : public ::testing::Test {
 
 TEST_F(ServerCrtp, server_cannot_start) {
     ON_CALL(_server.serverInterface(), startServer)
+        .WillByDefault(::testing::Throw(std::runtime_error("")));
+    EXPECT_ANY_THROW(_server.startServer());
+}
+
+struct ServerTypeErasure : public ::testing::Test {
+    ServerTypeErasure() : _server(srvMock, dMock) {}
+    type_erasure::Server _server;
+    type_erasure::ServerMock srvMock;
+    type_erasure::DatabaseMock dMock;
+};
+
+TEST_F(ServerTypeErasure, server_cannot_start) {
+    ON_CALL(srvMock, startServer)
         .WillByDefault(::testing::Throw(std::runtime_error("")));
     EXPECT_ANY_THROW(_server.startServer());
 }
