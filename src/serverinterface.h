@@ -19,7 +19,7 @@ struct ServerInterface {
     typedef T ImplT;
 
     ServerInterface() {
-        static_assert(has_member_function_startServer<T, void>::value, "Type T has to have startServer");
+        static_assert(has_member_function_startServer<T, bool>::value, "Type T has to have startServer");
     }
 
     void startServer() { static_cast<T*>(this)->startServer(); }

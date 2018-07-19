@@ -28,12 +28,11 @@ template <typename S, typename D>
 struct Server {
     bool startServer() {
         _server.startServer();
-        _server.nonMockableFunction();
         return _db.initConnection();
     }
 
     S& serverInterface() noexcept { return _server; }
-    const D& databaseInterface() const noexcept { return _db; }
+    D& databaseInterface() noexcept { return _db; }
 
     static_assert(std::is_same<typename ServerInterface<S>::ImplT,
                                typename S::ImplT>::value,

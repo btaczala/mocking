@@ -18,6 +18,12 @@ struct ServerTests : public ::testing::Test {
     interface::Server s;
 };
 
+TEST_F(ServerTests, ok) {
+    EXPECT_CALL(*dbMock, initConnection()).WillOnce(::testing::Return(true));
+    EXPECT_CALL(*srvMock, startServer()).WillOnce(::testing::Return(true));
+    EXPECT_TRUE(s.startServer());
+}
+
 TEST_F(ServerTests, server_cannot_start) {
     ON_CALL(*srvMock, startServer)
         .WillByDefault(::testing::Throw(std::runtime_error("")));

@@ -2,33 +2,51 @@
 
 #include "server.hpp"
 
+namespace {
+std::string random_string(size_t length) {
+    auto randchar = []() -> char {
+        const char charset[] =
+            "0123456789"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz";
+        const size_t max_index = (sizeof(charset) - 1);
+        return charset[rand() % max_index];
+    };
+    std::string str(length, 0);
+    std::generate_n(str.begin(), length, randchar);
+    return str;
+}
+}  // namespace
+
+bool actual_sever_start() { return random_string(2) == "ab"; }
+
 namespace interface {
 struct ServerMock : public ServerInterface {
    public:
-    bool startServer() override { return true; }
+    bool startServer() override { return actual_sever_start(); }
 };
 struct DatabaseMock : public DatabaseInterface {
-    bool initConnection() override { return false; }
+    bool initConnection() override { return actual_sever_start(); }
 };
 }  // namespace interface
 
 namespace crtp {
 struct ServerMock : public ServerInterface<ServerMock> {
-    void startServer() {}
+    bool startServer() { return actual_sever_start(); }
 };
 
 struct DatabaseMock : public DatabaseInterface<DatabaseMock> {
-    bool initConnection() { return false; }
+    bool initConnection() { return actual_sever_start(); }
 };
 }  // namespace crtp
 
 namespace type_erasure {
 struct ServerMock {
-    void startServer() {}
+    bool startServer() { return actual_sever_start(); }
 };
 
 struct DatabaseMock {
-    bool initConnection() { return false; }
+    bool initConnection() { return actual_sever_start(); }
 };
 }  // namespace type_erasure
 
@@ -62,5 +80,4 @@ void BM_type_erasure(benchmark::State& state) {
 BENCHMARK(BM_interface);
 BENCHMARK(BM_crtp);
 BENCHMARK(BM_type_erasure);
-
 BENCHMARK_MAIN();

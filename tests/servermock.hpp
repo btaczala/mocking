@@ -13,7 +13,7 @@ struct ServerMock : public ServerInterface {
 
 namespace crtp {
 struct ServerMock : public ServerInterface<ServerMock> {
-    MOCK_METHOD0(startServer, void());
+    MOCK_METHOD0(startServer, bool());
 };
 }  // namespace crtp
 
