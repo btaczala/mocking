@@ -22,8 +22,10 @@ void BM_interface_gmock(benchmark::State& state) {
     interface::DatabaseMock* dbMock{new interface::DatabaseMock};
     interface::Server s{srvMock, dbMock};
 
-    EXPECT_CALL(*srvMock, startServer()).Times(::testing::AtLeast(1));
-    EXPECT_CALL(*dbMock, initConnection()).Times(::testing::AtLeast(1));
+    EXPECT_CALL(*dbMock, initConnection())
+        .WillRepeatedly(::testing::Return(true));
+    EXPECT_CALL(*srvMock, startServer())
+        .WillRepeatedly(::testing::Return(true));
 
     for (auto _ : state) {
         benchmark::DoNotOptimize(s.startServer());
@@ -48,8 +50,9 @@ void BM_type_erasure_gmock(benchmark::State& state) {
     type_erasure::DatabaseMock dMock;
     type_erasure::Server s{sMock, dMock};
 
-    EXPECT_CALL(sMock, startServer()).Times(::testing::AtLeast(1));
-    EXPECT_CALL(dMock, initConnection()).Times(::testing::AtLeast(1));
+    EXPECT_CALL(dMock, initConnection())
+        .WillRepeatedly(::testing::Return(true));
+    EXPECT_CALL(sMock, startServer()).WillRepeatedly(::testing::Return(true));
 
     for (auto _ : state) {
         benchmark::DoNotOptimize(s.startServer());

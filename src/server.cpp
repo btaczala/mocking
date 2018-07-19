@@ -10,8 +10,7 @@ Server::Server(ServerInterface* server, DatabaseInterface* db)
 Server::~Server() {}
 
 bool Server::startServer() {
-    _server->startServer();
-    return _db->initConnection();
+    return _db->initConnection() && _server->startServer();
 }
 
 }  // namespace interface

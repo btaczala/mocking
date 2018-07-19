@@ -20,7 +20,7 @@ struct ServerMock : public ServerInterface<ServerMock> {
 namespace type_erasure {
 struct ServerMock {
    public:
-    MOCK_METHOD0(startServer, void());
+    MOCK_METHOD0(startServer, bool());
 };
 }  // namespace type_erasure
 

@@ -26,10 +26,7 @@ namespace crtp {
 
 template <typename S, typename D>
 struct Server {
-    bool startServer() {
-        _server.startServer();
-        return _db.initConnection();
-    }
+    bool startServer() { return _server.startServer() && _db.initConnection(); }
 
     S& serverInterface() noexcept { return _server; }
     D& databaseInterface() noexcept { return _db; }
@@ -37,7 +34,6 @@ struct Server {
     static_assert(std::is_same<typename ServerInterface<S>::ImplT,
                                typename S::ImplT>::value,
                   "S must derive from ServerIf");
-
    private:
     S _server;
     D _db;
@@ -50,17 +46,14 @@ namespace type_erasure {
 struct Server {
     template <typename ServerImpl, typename Database>
     Server(ServerImpl&& t, Database&& d) {
-        _startServer = [&t]() { t.startServer(); };
+        _startServer = [&t]() { return t.startServer(); };
         _initConnection = [&d]() { return d.initConnection(); };
     }
 
-    bool startServer() {
-        _startServer();
-        return _initConnection();
-    }
+    bool startServer() { return _startServer() && _initConnection(); }
 
    private:
-    std::function<void()> _startServer;
+    std::function<bool()> _startServer;
     std::function<bool()> _initConnection;
 };
 
