@@ -25,6 +25,7 @@ TEST_F(ServerTests, ok) {
 }
 
 TEST_F(ServerTests, server_cannot_start) {
+    ON_CALL(*dbMock, initConnection()).WillByDefault(::testing::Return(true));
     ON_CALL(*srvMock, startServer)
         .WillByDefault(::testing::Throw(std::runtime_error("")));
     EXPECT_ANY_THROW(s.startServer());

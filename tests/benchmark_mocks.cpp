@@ -36,9 +36,9 @@ void BM_crtp_gmock(benchmark::State& state) {
     crtp::Server<crtp::ServerMock, crtp::DatabaseMock> s;
 
     EXPECT_CALL(s.serverInterface(), startServer())
-        .Times(::testing::AtLeast(1));
+        .WillRepeatedly(::testing::Return(true));
     EXPECT_CALL(s.databaseInterface(), initConnection())
-        .Times(::testing::AtLeast(1));
+        .WillRepeatedly(::testing::Return(true));
 
     for (auto _ : state) {
         benchmark::DoNotOptimize((s.startServer()));
