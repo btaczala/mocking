@@ -14,16 +14,4 @@ struct DatabaseMock : public DatabaseInterface {
 
 }  // namespace interface
 
-namespace crtp {
-struct DatabaseMock : public DatabaseInterface<DatabaseMock> {
-    MOCK_METHOD0(initConnection, bool());
-};
-};  // namespace crtp
-
-namespace type_erasure {
-struct DatabaseMock {
-    MOCK_METHOD0(initConnection, bool());
-};
-}  // namespace type_erasure
-
 #endif /* end of include guard: DATABASEMOCK_HPP_QOEC7PQV */

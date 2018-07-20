@@ -27,28 +27,6 @@ TEST_F(ServerTests, ok) {
 TEST_F(ServerTests, server_cannot_start) {
     ON_CALL(*srvMock, startServer)
         .WillByDefault(::testing::Throw(std::runtime_error("")));
+    EXPECT_CALL(*dbMock, initConnection).WillOnce(::testing::Return(true));
     EXPECT_ANY_THROW(s.startServer());
-}
-
-struct ServerCrtp : public ::testing::Test {
-    crtp::Server<crtp::ServerMock, crtp::DatabaseMock> _server;
-};
-
-TEST_F(ServerCrtp, server_cannot_start) {
-    ON_CALL(_server.serverInterface(), startServer)
-        .WillByDefault(::testing::Throw(std::runtime_error("")));
-    EXPECT_ANY_THROW(_server.startServer());
-}
-
-struct ServerTypeErasure : public ::testing::Test {
-    ServerTypeErasure() : _server(srvMock, dMock) {}
-    type_erasure::Server _server;
-    type_erasure::ServerMock srvMock;
-    type_erasure::DatabaseMock dMock;
-};
-
-TEST_F(ServerTypeErasure, server_cannot_start) {
-    ON_CALL(srvMock, startServer)
-        .WillByDefault(::testing::Throw(std::runtime_error("")));
-    EXPECT_ANY_THROW(_server.startServer());
 }

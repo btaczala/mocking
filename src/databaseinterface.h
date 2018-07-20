@@ -9,9 +9,4 @@ struct DatabaseInterface {
 
 }  // namespace interface
 
-namespace crtp {
-template <typename T>
-struct DatabaseInterface {};
-}  // namespace crtp
-
 #endif /* end of include guard: DATABASEINTERFACE_H_YCFKXGRB */

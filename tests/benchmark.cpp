@@ -30,25 +30,6 @@ struct DatabaseMock : public DatabaseInterface {
 };
 }  // namespace interface
 
-namespace crtp {
-struct ServerMock : public ServerInterface<ServerMock> {
-    bool startServer() { return actual_sever_start(); }
-};
-
-struct DatabaseMock : public DatabaseInterface<DatabaseMock> {
-    bool initConnection() { return actual_sever_start(); }
-};
-}  // namespace crtp
-
-namespace type_erasure {
-struct ServerMock {
-    bool startServer() { return actual_sever_start(); }
-};
-
-struct DatabaseMock {
-    bool initConnection() { return actual_sever_start(); }
-};
-}  // namespace type_erasure
 
 void BM_interface(benchmark::State& state) {
     interface::ServerMock* srvMock{new interface::ServerMock};

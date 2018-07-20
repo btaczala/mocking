@@ -11,17 +11,5 @@ struct ServerMock : public ServerInterface {
 };
 }  // namespace interface
 
-namespace crtp {
-struct ServerMock : public ServerInterface<ServerMock> {
-    MOCK_METHOD0(startServer, bool());
-};
-}  // namespace crtp
-
-namespace type_erasure {
-struct ServerMock {
-   public:
-    MOCK_METHOD0(startServer, bool());
-};
-}  // namespace type_erasure
 
 #endif /* end of include guard: SERVERMOCK_HPP_CUZYOIX4 */
