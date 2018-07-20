@@ -4,59 +4,22 @@
 #include <functional>
 #include <memory>
 
-#include "databaseinterface.h"
-#include "serverinterface.h"
-
-namespace interface {
+struct Database {
+    bool init() { return true; }
+};
+struct RestServer {
+    bool init() { return true; }
+};
 
 struct Server {
-    Server(ServerInterface* server, DatabaseInterface* db);
+    Server();
 
     ~Server();
     bool startServer();
 
    private:
-    std::unique_ptr<ServerInterface> _server;
-    std::unique_ptr<DatabaseInterface> _db;
+    Database _db;
+    RestServer _rest;
 };
-
-}  // namespace interface
-
-namespace crtp {
-
-template <typename S, typename D>
-struct Server {
-    bool startServer() { return _server.startServer() && _db.initConnection(); }
-
-    S& serverInterface() noexcept { return _server; }
-    D& databaseInterface() noexcept { return _db; }
-
-    static_assert(std::is_same<typename ServerInterface<S>::ImplT,
-                               typename S::ImplT>::value,
-                  "S must derive from ServerIf");
-   private:
-    S _server;
-    D _db;
-};
-
-};  // namespace crtp
-
-namespace type_erasure {
-
-struct Server {
-    template <typename ServerImpl, typename Database>
-    Server(ServerImpl&& t, Database&& d) {
-        _startServer = [&t]() { return t.startServer(); };
-        _initConnection = [&d]() { return d.initConnection(); };
-    }
-
-    bool startServer() { return _startServer() && _initConnection(); }
-
-   private:
-    std::function<bool()> _startServer;
-    std::function<bool()> _initConnection;
-};
-
-}  // namespace type_erasure
 
 #endif /* end of include guard: SERVER_HPP_VNMSIJM5 */
