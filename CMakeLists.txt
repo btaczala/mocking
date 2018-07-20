@@ -19,15 +19,3 @@ macro(add_test_new name)
 endmacro()
 
 add_test_new(interface_mocking)
-
-add_executable(test_benchmark tests/benchmark.cpp)
-target_link_libraries(test_benchmark benchmark server-core)
-
-add_executable(test_benchmark_gmock tests/benchmark_mocks.cpp)
-target_link_libraries(test_benchmark_gmock benchmark server-core gmock)
-
-add_custom_target(benchmarks)
-add_custom_command(TARGET benchmarks 
-    COMMAND ${CMAKE_BINARY_DIR}/test_benchmark
-    COMMAND ${CMAKE_BINARY_DIR}/test_benchmark_gmock
-)

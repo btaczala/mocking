@@ -40,16 +40,6 @@ struct DatabaseMock : public DatabaseInterface<DatabaseMock> {
 };
 }  // namespace crtp
 
-namespace type_erasure {
-struct ServerMock {
-    bool startServer() { return actual_sever_start(); }
-};
-
-struct DatabaseMock {
-    bool initConnection() { return actual_sever_start(); }
-};
-}  // namespace type_erasure
-
 void BM_interface(benchmark::State& state) {
     interface::ServerMock* srvMock{new interface::ServerMock};
     interface::DatabaseMock* dbMock{new interface::DatabaseMock};
@@ -67,17 +57,7 @@ void BM_crtp(benchmark::State& state) {
     }
 }
 
-void BM_type_erasure(benchmark::State& state) {
-    type_erasure::ServerMock sMock;
-    type_erasure::DatabaseMock dMock;
-    type_erasure::Server s{sMock, dMock};
-
-    for (auto _ : state) {
-        benchmark::DoNotOptimize((s.startServer()));
-    }
-}
 
 BENCHMARK(BM_interface);
 BENCHMARK(BM_crtp);
-BENCHMARK(BM_type_erasure);
 BENCHMARK_MAIN();

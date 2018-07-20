@@ -45,21 +45,7 @@ void BM_crtp_gmock(benchmark::State& state) {
     }
 }
 
-void BM_type_erasure_gmock(benchmark::State& state) {
-    type_erasure::ServerMock sMock;
-    type_erasure::DatabaseMock dMock;
-    type_erasure::Server s{sMock, dMock};
-
-    EXPECT_CALL(dMock, initConnection())
-        .WillRepeatedly(::testing::Return(true));
-    EXPECT_CALL(sMock, startServer()).WillRepeatedly(::testing::Return(true));
-
-    for (auto _ : state) {
-        benchmark::DoNotOptimize(s.startServer());
-    }
-}
 
 BENCHMARK(BM_interface_gmock);
 BENCHMARK(BM_crtp_gmock);
-BENCHMARK(BM_type_erasure_gmock);
 BENCHMARK_MAIN();

@@ -41,22 +41,4 @@ struct Server {
 
 };  // namespace crtp
 
-namespace type_erasure {
-
-struct Server {
-    template <typename ServerImpl, typename Database>
-    Server(ServerImpl&& t, Database&& d) {
-        _startServer = [&t]() { return t.startServer(); };
-        _initConnection = [&d]() { return d.initConnection(); };
-    }
-
-    bool startServer() { return _startServer() && _initConnection(); }
-
-   private:
-    std::function<bool()> _startServer;
-    std::function<bool()> _initConnection;
-};
-
-}  // namespace type_erasure
-
 #endif /* end of include guard: SERVER_HPP_VNMSIJM5 */
